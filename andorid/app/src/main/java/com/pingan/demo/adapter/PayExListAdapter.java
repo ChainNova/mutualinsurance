@@ -12,7 +12,7 @@ import com.pingan.demo.R;
 import com.pingan.demo.controller.FragmentManagerControl;
 import com.pingan.demo.main.PayDetailFragment;
 import com.pingan.demo.main.PayFragment;
-import com.pingan.demo.model.entity.Claim;
+import com.pingan.demo.model.entity.Insurance;
 
 import java.util.List;
 
@@ -24,12 +24,15 @@ public class PayExListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> groupList;
     private List<List<PayFragment.IPayEntry>> itemList;
+    private List<Insurance> mInsurances;
 
     public PayExListAdapter(Context context, List<String> groupList,
-                            List<List<PayFragment.IPayEntry>> itemList) {
+                            List<List<PayFragment.IPayEntry>> itemList,
+                            List<Insurance> insurances) {
         this.context = context;
         this.groupList = groupList;
         this.itemList = itemList;
+        this.mInsurances = insurances;
     }
 
     @Override
@@ -98,11 +101,6 @@ public class PayExListAdapter extends BaseExpandableListAdapter {
         } else {
             groupHolder = (GroupHolder) convertView.getTag();
         }
-        if (!isExpanded) {
-
-        } else {
-
-        }
         groupHolder.txt.setText(groupList.get(groupPosition));
         return convertView;
     }
@@ -137,13 +135,13 @@ public class PayExListAdapter extends BaseExpandableListAdapter {
             if (convertView == null) {
                 convertView = LayoutInflater.from(context)
                         .inflate(R.layout.layout_pay_exlist_item2, null);
-                itemHolder = setHolder2(convertView);
+                itemHolder = setHolder2(groupPosition, convertView);
             } else {
                 itemHolder = (ItemHolder2) convertView.getTag(R.id.tag_second);
                 if (itemHolder == null || !(itemHolder instanceof ItemHolder2)) {
                     convertView = LayoutInflater.from(context)
                             .inflate(R.layout.layout_pay_exlist_item2, null);
-                    itemHolder = setHolder2(convertView);
+                    itemHolder = setHolder2(groupPosition, convertView);
                 }
             }
             PayFragment.InsurancePayEntry2 entry2 = (PayFragment.InsurancePayEntry2) itemList
@@ -157,7 +155,7 @@ public class PayExListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    private ItemHolder2 setHolder2(View convertView) {
+    private ItemHolder2 setHolder2(final int groupPosition, View convertView) {
         ItemHolder2 itemHolder = new ItemHolder2();
         itemHolder.description = (TextView) convertView.findViewById(R.id.description);
         itemHolder.name = (TextView) convertView.findViewById(R.id.name);
@@ -167,10 +165,10 @@ public class PayExListAdapter extends BaseExpandableListAdapter {
         convertView.findViewById(R.id.pay_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PayDetailFragment payDetailFragment=new PayDetailFragment();
-//                Bundle bundle=new Bundle();
-//                bundle.putSerializable("claim",data);
-//                payDetailFragment.setArguments(bundle);
+                PayDetailFragment payDetailFragment = new PayDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("Insurance", mInsurances.get(groupPosition));
+                payDetailFragment.setArguments(bundle);
                 FragmentManagerControl.getInstance().addFragment(payDetailFragment);
             }
         });

@@ -13,7 +13,6 @@ import com.pingan.demo.base.BaseActivity;
 import com.pingan.demo.controller.UserController;
 import com.pingan.demo.model.entity.ProfileRes;
 import com.pingan.demo.model.service.LoginService;
-import com.pingan.demo.model.viewmodel.GetLoginModel;
 import com.pingan.http.framework.network.ServiceTask;
 import com.pingan.http.framework.task.NetworkExcuter;
 import com.pingan.http.framework.task.NetwrokTaskError;
@@ -29,8 +28,6 @@ public class LoginActivity extends BaseActivity {
     private EditText phoneNum;
     private EditText pwd;
     private ProfileRes profileRes;
-
-    GetLoginModel getLoginModel;
     private ServiceCallback taskCallback = new ServiceCallback() {
         @Override
         public void onTaskStart(String serverTag) {
@@ -70,7 +67,6 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getLoginModel = new GetLoginModel();
         initView();
     }
 

@@ -84,18 +84,27 @@ public class GifView extends View {
         requestLayout();
     }
 
+    public Movie getMovie() {
+        return mMovie;
+    }
+
     public void setMovie(Movie movie) {
         this.mMovie = movie;
         requestLayout();
     }
 
-    public Movie getMovie() {
-        return mMovie;
-    }
-
     public void setMovieTime(int time) {
         mCurrentAnimationTime = time;
         invalidate();
+    }
+
+    /**
+     * 判断gif图是否停止了
+     *
+     * @return
+     */
+    public boolean isPaused() {
+        return this.mPaused;
     }
 
     /**
@@ -109,15 +118,6 @@ public class GifView extends View {
             mMovieStart = android.os.SystemClock.uptimeMillis() - mCurrentAnimationTime;
         }
         invalidate();
-    }
-
-    /**
-     * 判断gif图是否停止了
-     *
-     * @return
-     */
-    public boolean isPaused() {
-        return this.mPaused;
     }
 
     @Override

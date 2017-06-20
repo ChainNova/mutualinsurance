@@ -7,6 +7,7 @@ package com.pingan.http.framework.network;
 public interface BusinessParser<T> {
     /**
      * 解析返回的response
+     *
      * @param t 返回的数据
      * @return
      */

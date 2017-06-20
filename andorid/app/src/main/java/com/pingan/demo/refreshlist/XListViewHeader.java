@@ -22,18 +22,16 @@ import android.widget.TextView;
 import com.pingan.demo.R;
 
 public class XListViewHeader extends LinearLayout {
+    public final static int STATE_NORMAL = 0;
+    public final static int STATE_READY = 1;
+    public final static int STATE_REFRESHING = 2;
     private LinearLayout mContainer;
     private ImageView mArrowImageView;
     private ProgressBar mProgressBar;
     private TextView mHintTextView;
     private int mState = STATE_NORMAL;
-
     private Animation mRotateUpAnim;
     private Animation mRotateDownAnim;
-
-    public final static int STATE_NORMAL = 0;
-    public final static int STATE_READY = 1;
-    public final static int STATE_REFRESHING = 2;
 
     public XListViewHeader(Context context) {
         super(context);
@@ -111,6 +109,10 @@ public class XListViewHeader extends LinearLayout {
         mState = state;
     }
 
+    public int getVisiableHeight() {
+        return mContainer.getHeight();
+    }
+
     public void setVisiableHeight(int height) {
         if (height < 0) {
             height = 0;
@@ -118,10 +120,6 @@ public class XListViewHeader extends LinearLayout {
         LayoutParams lp = (LayoutParams) mContainer.getLayoutParams();
         lp.height = height;
         mContainer.setLayoutParams(lp);
-    }
-
-    public int getVisiableHeight() {
-        return mContainer.getHeight();
     }
 
 }

@@ -27,9 +27,9 @@ public class BaseActivity extends FragmentActivity implements MarkAble {
     protected Button returnBtn;
     protected TextView mRightTextView;
     protected FrameLayout mContent;
-    private MainFrameLayout mMainView;
     protected LoadingLayout content_ll;
     protected LayoutInflater inflater;
+    private MainFrameLayout mMainView;
     private int mStatusHeight = 0;
 
     @Override

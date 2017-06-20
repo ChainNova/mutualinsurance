@@ -6,19 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.pingan.demo.MyApplication;
 import com.pingan.demo.R;
+import com.pingan.demo.SpUtils;
 import com.pingan.demo.UrlTools;
 import com.pingan.demo.adapter.PayExListAdapter;
 import com.pingan.demo.base.BaseFragment;
-import com.pingan.demo.loadframe.ListDataLoadHandler;
+import com.pingan.demo.controller.UserController;
 import com.pingan.demo.model.entity.Insurance;
+import com.pingan.demo.model.entity.InsuranceReq;
 import com.pingan.demo.model.entity.ProfileRes;
 import com.pingan.demo.model.service.LoginService;
-import com.pingan.demo.refreshlist.XListView;
 import com.pingan.http.framework.network.ServiceTask;
 import com.pingan.http.framework.task.NetworkExcuter;
 import com.pingan.http.framework.task.NetwrokTaskError;
@@ -32,32 +33,12 @@ import java.util.List;
  */
 
 public class PayFragment extends BaseFragment {
-    public PayFragment() {
-
-    }
-
-    private XListView mListView;
-    private LinearLayout refreshView;
-    private ListDataLoadHandler listDataLoadHandler;
     private ExpandableListView expandableListView;
     private PayExListAdapter payExListAdapter;
     private List<String> groupList;
     private List<List<IPayEntry>> itemList;
-    private List<String> itemList2;
-
     private ProfileRes profileRes;
-
     private List<Insurance> mInsurances;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        mainLayout = (ViewGroup) LayoutInflater.from(getActivity())
-                .inflate(R.layout.layout_pay, baseLayout);
-        return baseLayout;
-    }
-
     private ServiceCallback taskCallback = new ServiceCallback() {
         @Override
         public void onTaskStart(String serverTag) {
@@ -87,14 +68,24 @@ public class PayFragment extends BaseFragment {
         }
     };
 
+    public PayFragment() {
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        mainLayout = (ViewGroup) LayoutInflater.from(getActivity())
+                .inflate(R.layout.layout_pay, baseLayout);
+        return baseLayout;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (mainLayout != null) {
             profileRes = new ProfileRes();
-            mListView = (XListView) mainLayout.findViewById(R.id.list);
-            refreshView = (LinearLayout) mainLayout.findViewById(R.id.no_data_layout);
             expandableListView = (ExpandableListView) mainLayout.findViewById(R.id.exlist);
             expandableListView.setGroupIndicator(null);
             expandableListView
@@ -122,6 +113,14 @@ public class PayFragment extends BaseFragment {
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            getMeDetail();
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         getMeDetail();
@@ -140,6 +139,7 @@ public class PayFragment extends BaseFragment {
         itemList = new ArrayList<>();
         if (profileRes != null && profileRes.getData() != null
                 && profileRes.getData().getInsurances() != null) {
+            UserController.getInstance().setProfile(profileRes.getData());
             mInsurances = profileRes.getData().getInsurances();
             for (int i = 0; i < mInsurances.size(); i++) {
                 groupList.add(mInsurances.get(i).getName());
@@ -163,8 +163,30 @@ public class PayFragment extends BaseFragment {
                     List<IPayEntry> payItemList3 = new ArrayList<>();
                     InsurancePayEntry2 insurancePayEntry21 = new InsurancePayEntry2();
                     insurancePayEntry21.description = "＊延误信息数据由中国南方航空提供";
-                    insurancePayEntry21.name = "姓名：张三";
-                    insurancePayEntry21.cardId = "会员卡号：5300****1234";
+
+
+                    String jsonString = (String) SpUtils.getInstance().getParam(
+                            UserController.getInstance().getUser() + mInsurances.get(i).getId(),
+                            "");
+                    InsuranceReq info = null;
+                    try {
+                        info = new Gson().fromJson(jsonString, InsuranceReq.class);
+                    } catch (Exception e) {
+
+                    }
+
+
+                    if (info != null && info.getName() != null) {
+                        insurancePayEntry21.name = "姓名：" + info.getName();
+                    } else {
+                        insurancePayEntry21.name = "姓名：张三";
+                    }
+                    if (info != null && info.getId_csa() != null) {
+                        insurancePayEntry21.cardId = "会员卡号：" + info.getId_csa();
+                    } else {
+                        insurancePayEntry21.cardId = "会员卡号：5300****1234";
+                    }
+
                     insurancePayEntry21.delayTimes = "本年延误次数16次";
                     payItemList3.add(insurancePayEntry21);
                     itemList.add(i, payItemList3);
@@ -179,7 +201,7 @@ public class PayFragment extends BaseFragment {
             }
         }
 
-        payExListAdapter = new PayExListAdapter(getActivity(), groupList, itemList);
+        payExListAdapter = new PayExListAdapter(getActivity(), groupList, itemList, mInsurances);
         expandableListView.setAdapter(payExListAdapter);
         for (int i = 0; i < groupList.size(); i++) {
             expandableListView.expandGroup(i);

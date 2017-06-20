@@ -35,11 +35,6 @@ public class ChargeFragment extends BaseFragment {
     private TextView money_text_50;
     private TextView money_text_100;
     private TextView money_text_200;
-
-    public ChargeFragment() {
-
-    }
-
     private ServiceCallback taskCallback = new ServiceCallback() {
         @Override
         public void onTaskStart(String serverTag) {
@@ -48,8 +43,22 @@ public class ChargeFragment extends BaseFragment {
 
         @Override
         public void onTaskSuccess(String serverTag) {
-            content_ll.removeProcess();
-            Toast.makeText(getActivity(), "充值成功", Toast.LENGTH_SHORT).show();
+
+            MyApplication.getAppContext().getHandler().post(new Runnable() {
+                @Override
+                public void run() {
+                    content_ll.removeProcess();
+                    Toast.makeText(getActivity(), "充值成功", Toast.LENGTH_SHORT).show();
+                    MyApplication.getAppContext().getHandler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getActivity() != null) {
+                                getActivity().onBackPressed();
+                            }
+                        }
+                    }, 2000);
+                }
+            });
         }
 
         @Override
@@ -63,6 +72,10 @@ public class ChargeFragment extends BaseFragment {
             });
         }
     };
+
+    public ChargeFragment() {
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

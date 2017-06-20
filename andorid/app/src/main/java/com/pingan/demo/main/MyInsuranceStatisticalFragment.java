@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pingan.demo.NumUtil;
 import com.pingan.demo.R;
 import com.pingan.demo.base.BaseFragment;
 import com.pingan.demo.model.entity.Insurance;
@@ -94,18 +95,14 @@ public class MyInsuranceStatisticalFragment extends BaseFragment {
                         }
                     });
 
-
             //启动资金
             final TextView money_text = (TextView) mainLayout.findViewById(R.id.money_text);
-            //            if (Double.valueOf(mInsurance.getSource()) / 10000 > 0) {
-            //                money_text.setText(
-            //                        String.valueOf(Double.valueOf(mInsurance.getSource()) / 10000) + "万");
-            //            } else {
-            //                money_text.setText(mInsurance.getSource());
-            //            }
-
-            money_text.setText("30万");
-
+            int value22 = NumUtil.changeToInt(mInsurance.getSource());
+            if (value22 / 10000 > 0) {
+                money_text.setText(String.valueOf(value22 / 10000) + "万");
+            } else {
+                money_text.setText(String.valueOf(mInsurance.getSource()));
+            }
 
             //来源
             final TextView source_text = (TextView) mainLayout.findViewById(R.id.source_text);

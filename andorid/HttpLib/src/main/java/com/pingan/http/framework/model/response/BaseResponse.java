@@ -8,6 +8,7 @@ import com.pingan.http.framework.interfaces.UnProguard;
  */
 public class BaseResponse implements UnProguard {
     public Status status;
+
     public static class Status {
         public int code = 0;
         public String message;

@@ -34,8 +34,7 @@ public class LoginService {
                     public BusinessResult parseData(ProfileRes data) {
 
                         BusinessResult result = new BusinessResult();
-                        if (data.getStatus() != null
-                                && data.getStatus().getCode() == 0) {
+                        if (data.getStatus() != null && data.getStatus().getCode() == 0) {
                             result.isSuccess = true;
                             profileRes.setData(data.getData());
                         } else {

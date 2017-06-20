@@ -1,6 +1,5 @@
 package com.pingan.http.framework.network;
 
-import java.net.Authenticator;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -14,7 +13,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 /**
  * okhttp工具类,使用指定密钥库初始化okhttp

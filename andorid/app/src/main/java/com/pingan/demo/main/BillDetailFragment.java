@@ -5,13 +5,24 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.pingan.demo.MyApplication;
+import com.pingan.demo.NumUtil;
 import com.pingan.demo.R;
+import com.pingan.demo.UrlTools;
 import com.pingan.demo.base.BaseFragment;
 import com.pingan.demo.controller.FragmentManagerControl;
 import com.pingan.demo.model.entity.Insurance;
+import com.pingan.demo.model.entity.ProfileRes;
+import com.pingan.demo.model.service.LoginService;
+import com.pingan.http.framework.network.ServiceTask;
+import com.pingan.http.framework.task.NetworkExcuter;
+import com.pingan.http.framework.task.NetwrokTaskError;
+import com.pingan.http.framework.task.ServiceCallback;
 
 /**
  * Created by guolidong752 on 16/1/2.
@@ -20,6 +31,42 @@ import com.pingan.demo.model.entity.Insurance;
 public class BillDetailFragment extends BaseFragment {
     private BaseFragment billBuyFragment;
     private Insurance mInsurance;
+    private ProfileRes profileRes;
+    private Button joinButton;
+    private ServiceCallback taskCallback = new ServiceCallback() {
+        @Override
+        public void onTaskStart(String serverTag) {
+            content_ll.showProcess();
+        }
+
+        @Override
+        public void onTaskSuccess(String serverTag) {
+            MyApplication.getAppContext().getHandler().post(new Runnable() {
+                @Override
+                public void run() {
+                    initData();
+                    content_ll.removeProcess();
+                }
+            });
+        }
+
+        @Override
+        public void onTaskFail(final NetwrokTaskError error, String serverTag) {
+            MyApplication.getAppContext().getHandler().post(new Runnable() {
+                @Override
+                public void run() {
+                    MyApplication.getAppContext().getHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), error.errorString, Toast.LENGTH_SHORT)
+                                    .show();
+                            content_ll.showRequestError();
+                        }
+                    });
+                }
+            });
+        }
+    };
 
     public BillDetailFragment() {
 
@@ -79,17 +126,7 @@ public class BillDetailFragment extends BaseFragment {
             fee.setText(String.valueOf(mInsurance.getFee()) + "元／月起");
             TextView issuer = (TextView) mainLayout.findViewById(R.id.issuer);
             issuer.setText(mInsurance.getIssuer());
-            mainLayout.findViewById(R.id.join_btn).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    billBuyFragment = new BillBuyFragment();
-                    Bundle data = new Bundle();
-                    data.putString("id_insurance", mInsurance.getId());
-                    data.putString("insurance_name", mInsurance.getName());
-                    billBuyFragment.setArguments(data);
-                    FragmentManagerControl.getInstance().addFragment(billBuyFragment);
-                }
-            });
+
 
             //保险名称
             final TextView name_text = (TextView) mainLayout.findViewById(R.id.name_text);
@@ -149,14 +186,12 @@ public class BillDetailFragment extends BaseFragment {
 
             //启动资金
             final TextView money_text = (TextView) mainLayout.findViewById(R.id.money_text);
-            //            if (Double.valueOf(mInsurance.getSource()) / 10000 > 0) {
-            //                money_text.setText(
-            //                        String.valueOf(Double.valueOf(mInsurance.getSource()) / 10000) + "万");
-            //            } else {
-            //                money_text.setText(mInsurance.getSource());
-            //            }
-
-            money_text.setText("30万");
+            int value22 = NumUtil.changeToInt(mInsurance.getSource());
+            if (value22 / 10000 > 0) {
+                money_text.setText(String.valueOf(value22 / 10000) + "万");
+            } else {
+                money_text.setText(String.valueOf(mInsurance.getSource()));
+            }
 
 
             //来源
@@ -193,7 +228,7 @@ public class BillDetailFragment extends BaseFragment {
 
             //参与人数
             final TextView count_text = (TextView) mainLayout.findViewById(R.id.count_text);
-            int value3 = NumUtil.changeToInt(mInsurance.getAmount_max());
+            int value3 = NumUtil.changeToInt(mInsurance.getCount_bought());
             if (value3 / 10000 > 0) {
                 count_text.setText(String.valueOf(value3 / 10000) + "万");
             } else {
@@ -327,6 +362,57 @@ public class BillDetailFragment extends BaseFragment {
                             return false;
                         }
                     });
+
+
+            profileRes = new ProfileRes();
+
+            joinButton = (Button) mainLayout.findViewById(R.id.join_btn);
+            joinButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    billBuyFragment = new BillBuyFragment();
+                    Bundle data = new Bundle();
+                    data.putString("id_insurance", mInsurance.getId());
+                    data.putString("insurance_name", mInsurance.getName());
+                    billBuyFragment.setArguments(data);
+                    FragmentManagerControl.getInstance().addFragment(billBuyFragment);
+                    joinButton.setEnabled(false);
+                }
+            });
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getMeDetail();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            getMeDetail();
+        }
+    }
+
+    private void initData() {
+        joinButton.setEnabled(true);
+        if (profileRes != null && profileRes.getData() != null
+                && profileRes.getData().getInsurances() != null) {
+            for (Insurance current : profileRes.getData().getInsurances()) {
+                if (current.getId().equals(mInsurance.getId())) {
+                    joinButton.setEnabled(false);
+                }
+            }
+        }
+    }
+
+    private void getMeDetail() {
+        ServiceTask serviceTask = new ServiceTask(
+                LoginService.getProfile(UrlTools.GET_ME_DETAIL, profileRes));
+        serviceTask.setCancelable(true).setShowProcess(true);
+        serviceTask.setCallback(taskCallback);
+        NetworkExcuter.getInstance().excute(serviceTask, this);
     }
 }

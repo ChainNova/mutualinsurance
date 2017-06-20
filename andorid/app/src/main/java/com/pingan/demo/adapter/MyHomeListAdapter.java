@@ -64,7 +64,7 @@ public class MyHomeListAdapter extends BaseAdapter {
             itemHolder = (ItemHolder) convertView.getTag();
         }
         itemHolder.name.setText(data.getName());
-        itemHolder.count_helped.setText(data.getCount_helped() + "人（详情）");
+        itemHolder.count_helped.setText(data.getCount_helped() + "人");
         itemHolder.balance.setText(String.valueOf(data.getBalance()) + "元");
         itemHolder.count_bought.setText(String.valueOf(data.getCount_bought()) + "人");
         itemHolder.fee.setText(String.valueOf(data.getFee()) + "元");

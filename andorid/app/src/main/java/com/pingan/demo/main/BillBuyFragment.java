@@ -4,12 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pingan.demo.MyApplication;
 import com.pingan.demo.R;
+import com.pingan.demo.SpUtils;
 import com.pingan.demo.base.BaseFragment;
 import com.pingan.demo.controller.UserController;
 import com.pingan.demo.model.entity.InsuranceReq;
@@ -40,13 +44,8 @@ public class BillBuyFragment extends BaseFragment {
     private EditText id_driving;//行驶证号
     private EditText id_didi;//滴滴账号
     private EditText id_csa;//南航会员号
-
+    private Button button;
     private InsuranceReq insuranceReq;
-
-    public BillBuyFragment() {
-
-    }
-
     private ServiceCallback taskCallback = new ServiceCallback() {
         @Override
         public void onTaskStart(String serverTag) {
@@ -55,12 +54,21 @@ public class BillBuyFragment extends BaseFragment {
 
         @Override
         public void onTaskSuccess(String serverTag) {
-            //            if (serverTag.equals(SiInfoService.SERVICE_TAG_getSiInfo)) {
-            //                //                setCardView();
-            //
-            //            }
-            content_ll.removeProcess();
-            Toast.makeText(getActivity(), "充值成功", Toast.LENGTH_SHORT).show();
+            MyApplication.getAppContext().getHandler().post(new Runnable() {
+                @Override
+                public void run() {
+                    content_ll.removeProcess();
+                    Toast.makeText(getActivity(), "充值成功", Toast.LENGTH_SHORT).show();
+                    MyApplication.getAppContext().getHandler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getActivity() != null) {
+                                getActivity().onBackPressed();
+                            }
+                        }
+                    }, 2000);
+                }
+            });
         }
 
         @Override
@@ -70,11 +78,16 @@ public class BillBuyFragment extends BaseFragment {
                 public void run() {
                     Toast.makeText(getActivity(), error.errorString, Toast.LENGTH_SHORT).show();
                     content_ll.showRequestError();
+                    button.setEnabled(true);
                 }
             });
 
         }
     };
+
+    public BillBuyFragment() {
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -200,7 +213,8 @@ public class BillBuyFragment extends BaseFragment {
             id_didi = (EditText) mainLayout.findViewById(R.id.id_didi);//滴滴账号
             id_csa = (EditText) mainLayout.findViewById(R.id.id_csa);//南航会员号
             final String id_insurance = getArguments().getString("id_insurance");
-            mainLayout.findViewById(R.id.charge_btn).setOnClickListener(new View.OnClickListener() {
+            button = (Button) mainLayout.findViewById(R.id.charge_btn);
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     insuranceReq = new InsuranceReq();
@@ -218,6 +232,7 @@ public class BillBuyFragment extends BaseFragment {
                     insuranceReq.setId_didi(id_didi.getText().toString());
                     insuranceReq.setId_csa(id_csa.getText().toString());
                     insuranceReq.setReserved("");
+                    button.setEnabled(false);
                     doPostInsurance();
                 }
             });
@@ -232,6 +247,14 @@ public class BillBuyFragment extends BaseFragment {
             } else if (insurance_name.contains("南航金卡延误互助")) {
                 mainLayout.findViewById(R.id.id_csa_layout).setVisibility(View.VISIBLE);
             }
+
+            ((CheckBox) mainLayout.findViewById(R.id.check_id))
+                    .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            button.setEnabled(isChecked);
+                        }
+                    });
         }
     }
 
@@ -254,6 +277,23 @@ public class BillBuyFragment extends BaseFragment {
             jsonObject.put("id_csa", insuranceReq.getId_csa());
             jsonObject.put("time_bought", DateUtil.getCurrentTime("yyyy-MM-dd hh:mm:ss"));
             jsonObject.put("reserved", insuranceReq.getReserved());
+            JSONObject temp = new JSONObject();
+            temp.put("name", insuranceReq.getName());
+            temp.put("id_insurance", insuranceReq.getId_insurance());
+            temp.put("id_user", insuranceReq.getId_user());
+            temp.put("name", insuranceReq.getName());
+            temp.put("idcard", insuranceReq.getIdcard());
+            temp.put("mobile", insuranceReq.getMobile());
+            temp.put("amount", insuranceReq.getAmount());
+            temp.put("medical", insuranceReq.getMedical());
+            temp.put("id_driver", insuranceReq.getId_driver());
+            temp.put("id_driving", insuranceReq.getId_driving());
+            temp.put("id_didi", insuranceReq.getId_didi());
+            temp.put("id_csa", insuranceReq.getId_csa());
+            temp.put("time_bought", DateUtil.getCurrentTime("yyyy-MM-dd hh:mm:ss"));
+            temp.put("reserved", insuranceReq.getReserved());
+            SpUtils.getInstance().setParam(
+                    UserController.getInstance().getUser() + insuranceReq.getId_insurance(), temp);
         } catch (JSONException e) {
             e.printStackTrace();
         }

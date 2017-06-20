@@ -54,6 +54,7 @@ public class InsuranceSta {
     }
 
     public double getCost() {
+        cost = ((int) (cost * 100)) / 100.0;
         return cost;
     }
 
@@ -62,6 +63,7 @@ public class InsuranceSta {
     }
 
     public double getFee() {
+        fee = ((int) (fee * 100)) / 100.0;
         return fee;
     }
 

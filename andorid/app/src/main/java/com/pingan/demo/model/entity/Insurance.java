@@ -137,6 +137,12 @@ public class Insurance implements Serializable {
     }
 
     public String getFee() {
+        if (fee != null && fee.contains(".")) {
+            int floatIndex = fee.indexOf(".");
+            if (fee.length() >= floatIndex + 3) {
+                fee = fee.substring(0, floatIndex + 3);
+            }
+        }
         return fee;
     }
 

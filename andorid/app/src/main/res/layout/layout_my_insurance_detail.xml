@@ -63,8 +63,4 @@
         android:dividerHeight="0dp"
         android:scrollbars="none"/>
 
-    <include
-        android:id="@+id/no_data_layout"
-        layout="@layout/widget_request_fail_layout"
-        android:visibility="invisible"/>
 </LinearLayout>

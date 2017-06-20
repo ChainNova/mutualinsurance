@@ -1,5 +1,7 @@
 package com.pingan.demo.controller;
 
+import com.pingan.demo.model.entity.Profile;
+
 /**
  * Created by guolidong752 on 17/5/8.
  */
@@ -9,6 +11,7 @@ public class UserController {
 
     private String user;
     private String pass;
+    private Profile profile;
 
     private UserController() {
     }
@@ -34,5 +37,14 @@ public class UserController {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }

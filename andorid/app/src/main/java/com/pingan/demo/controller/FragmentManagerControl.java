@@ -30,6 +30,13 @@ public class FragmentManagerControl {
 
     public void setFragmentManager(FragmentManager manager) {
         fragmentManager = manager;
+        fragmentManager
+                .addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+                    @Override
+                    public void onBackStackChanged() {
+                        fragmentManager.findFragmentById(R.id.main_view).onHiddenChanged(false);
+                    }
+                });
     }
 
     public void switchFragment(BaseFragment from, BaseFragment to) {

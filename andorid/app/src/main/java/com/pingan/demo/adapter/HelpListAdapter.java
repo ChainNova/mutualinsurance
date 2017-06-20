@@ -184,8 +184,7 @@ public class HelpListAdapter extends BaseAdapter {
                 });
 
 
-        itemHolder.title
-                .setText(data.getId_claim() + "-" + data.getTime_claimed() + "-" + data.getName());
+        itemHolder.title.setText(data.getTime_claimed() + "-" + data.getName());
         itemHolder.name.setText(data.getName());//理赔人姓名
         itemHolder.mobile.setText(data.getMobile());//联系方式
         if (data.getAmount() / 10000 > 0) {

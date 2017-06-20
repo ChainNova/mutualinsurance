@@ -334,7 +334,7 @@
             android:layout_marginLeft="20dp"
             android:gravity="center_vertical|left"
             android:includeFontPadding="false"
-            android:text="公示时间（完成核验）"
+            android:text="公示时间"
             android:textColor="#2e2e2e"
             android:textSize="12dp"
             android:textStyle="bold"/>

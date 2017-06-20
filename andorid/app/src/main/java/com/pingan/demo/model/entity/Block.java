@@ -7,25 +7,25 @@ import java.util.List;
  */
 
 public class Block {
-    private String version;//版本
-    private Timestamp timestamp;
+    private int version;//版本
+    private String timestamp;
     private List<Transaction> transactions;
     private String previousBlockHash;
     private NonHashData nonHashData;
 
-    public String getVersion() {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(int version) {
         this.version = version;
     }
 
-    public Timestamp getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -53,7 +53,7 @@ public class Block {
         this.nonHashData = nonHashData;
     }
 
-    public static class NonHashData{
+    public static class NonHashData {
         private Timestamp localLedgerCommitTimestamp;
 
         public Timestamp getLocalLedgerCommitTimestamp() {

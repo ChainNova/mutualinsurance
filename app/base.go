@@ -176,9 +176,12 @@ func (setup *BaseSetupImpl) GetPeers(chainID string, chainCodeID string, args []
 
 	fmt.Printf("Name=%v, pp=%v, peers=%v, orderer=%v\n", setup.Chain.GetName(), setup.Chain.GetPrimaryPeer(), setup.Chain.GetPeers(), setup.Chain.GetOrderers())
 
-	for _, p := range peers {
+	for i, p := range peers {
 		var peer Peer
 		peer.ID.Name = p.GetName()
+		if peer.ID.Name == "" {
+			peer.ID.Name = fmt.Sprintf("%v", i)
+		}
 		peer.Address = p.GetURL()
 		peer.PkiID = p.GetName()
 

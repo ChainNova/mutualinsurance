@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,7 +14,6 @@ import com.pingan.demo.UrlTools;
 import com.pingan.demo.adapter.MyHomeListAdapter;
 import com.pingan.demo.base.BaseFragment;
 import com.pingan.demo.controller.FragmentManagerControl;
-import com.pingan.demo.loadframe.ListDataLoadHandler;
 import com.pingan.demo.model.entity.ProfileRes;
 import com.pingan.demo.model.service.LoginService;
 import com.pingan.demo.refreshlist.XListView;
@@ -31,29 +29,11 @@ import com.pingan.http.framework.task.ServiceCallback;
 public class MyHomeFragment extends BaseFragment {
     private MyInsuranceDetailFragment myInsuranceDetailFragment;
     private ChargeFragment chargeFragment;
-
-    public MyHomeFragment() {
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        mainLayout = (ViewGroup) LayoutInflater.from(getActivity())
-                .inflate(R.layout.layout_myhome, baseLayout);
-        return baseLayout;
-    }
-
     private XListView mListView;
     private ProfileRes profileRes;
     private TextView balance;//充值余额
     private TextView count_helped;//资助人数
     private TextView fee;//分摊金额
-    private LinearLayout refreshView;
-    private ListDataLoadHandler listDataLoadHandler;
-
-
     private ServiceCallback taskCallback = new ServiceCallback() {
         @Override
         public void onTaskStart(String serverTag) {
@@ -66,9 +46,9 @@ public class MyHomeFragment extends BaseFragment {
                 @Override
                 public void run() {
                     initData();
+                    content_ll.removeProcess();
                 }
             });
-            content_ll.removeProcess();
         }
 
         @Override
@@ -89,6 +69,18 @@ public class MyHomeFragment extends BaseFragment {
         }
     };
 
+    public MyHomeFragment() {
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        mainLayout = (ViewGroup) LayoutInflater.from(getActivity())
+                .inflate(R.layout.layout_myhome, baseLayout);
+        return baseLayout;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -96,11 +88,30 @@ public class MyHomeFragment extends BaseFragment {
         if (mainLayout != null) {
             profileRes = new ProfileRes();
             mListView = (XListView) mainLayout.findViewById(R.id.list);
-            refreshView = (LinearLayout) mainLayout.findViewById(R.id.no_data_layout);
             balance = (TextView) mainLayout.findViewById(R.id.balance);
             count_helped = (TextView) mainLayout.findViewById(R.id.count_helped);
             fee = (TextView) mainLayout.findViewById(R.id.fee);
 
+            mainLayout.findViewById(R.id.charge).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    chargeFragment = new ChargeFragment();
+                    Bundle data = new Bundle();
+                    if (profileRes == null || profileRes.getData() == null) {
+                        Toast.makeText(getActivity(), "至少加入一个互助计划才可以充值哦～", Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                        //                        data.putString("getBalance", "0.00");
+                        //                        data.putString("getFee", "0.00");
+                    } else {
+                        data.putString("getBalance",
+                                String.valueOf(profileRes.getData().getBalance()));
+                        data.putString("getFee", String.valueOf(profileRes.getData().getFee()));
+                    }
+                    chargeFragment.setArguments(data);
+                    FragmentManagerControl.getInstance().addFragment(chargeFragment);
+                }
+            });
         }
     }
 
@@ -108,6 +119,14 @@ public class MyHomeFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         getMeDetail();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            getMeDetail();
+        }
     }
 
     private void getMeDetail() {
@@ -159,19 +178,6 @@ public class MyHomeFragment extends BaseFragment {
                     myInsuranceDetailFragment.setArguments(data);
                     FragmentManagerControl.getInstance().addFragment(myInsuranceDetailFragment);
                 }
-            }
-        });
-
-
-        mainLayout.findViewById(R.id.charge).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chargeFragment = new ChargeFragment();
-                Bundle data = new Bundle();
-                data.putString("getBalance", String.valueOf(profileRes.getData().getBalance()));
-                data.putString("getFee", String.valueOf(profileRes.getData().getFee()));
-                chargeFragment.setArguments(data);
-                FragmentManagerControl.getInstance().addFragment(chargeFragment);
             }
         });
     }

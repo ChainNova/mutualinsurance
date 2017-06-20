@@ -56,8 +56,8 @@ public class BusinessResult {
             isSuccess = false;
             return;
         }
-        if ((response.status.code == FrameworkConstants.CODE_BUSINESS_SUCCESS) || (response.status.code
-                == FrameworkConstants.CODE_CMS_SUCCESS)) {
+        if ((response.status.code == FrameworkConstants.CODE_BUSINESS_SUCCESS) || (
+                response.status.code == FrameworkConstants.CODE_CMS_SUCCESS)) {
             errorString = "";
         } else {
             isSuccess = false;

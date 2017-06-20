@@ -64,10 +64,10 @@ public class NetworkExcuter {
 
         final String tag = taskModel.getTag();
         Request okrequest = makeOkRequest(taskModel);
-        Log.e("guolidong", okrequest.toString() + (okrequest.body() == null ? " body is null" :
-                (" body is " + okrequest.body())));
-        if(okrequest.body()!=null){
-            RequestBody requestBody=okrequest.body();
+        Log.e("guolidong", okrequest.toString() + (
+                okrequest.body() == null ? " body is null" : (" body is " + okrequest.body())));
+        if (okrequest.body() != null) {
+            RequestBody requestBody = okrequest.body();
             requestBody.toString();
         }
         Callback networkcallback = new Callback() {
@@ -119,9 +119,11 @@ public class NetworkExcuter {
         final T t;
 
         try {
-
             if (serviceParams.getResponseType() == String.class) {
                 String str = response.toString();
+                if (response.body() != null) {
+                    str = response.body().string();
+                }
                 t = (T) str;
             } else {
                 String str = response.body().string();

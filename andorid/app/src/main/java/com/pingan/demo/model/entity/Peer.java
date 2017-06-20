@@ -42,7 +42,7 @@ public class Peer {
         this.pkiID = pkiID;
     }
 
-    public static class ID{
+    public static class ID {
         private String name;
 
         public String getName() {

@@ -18,9 +18,6 @@ public class GetServiceParams<T> extends ServiceParams<T> {
 
     @Override
     public Request getRequest(String tag) {
-        return new Request.Builder()
-                .url(getUrl()).headers(Headers.of(headers))
-                .tag(tag)
-                .build();
+        return new Request.Builder().url(getUrl()).headers(Headers.of(headers)).tag(tag).build();
     }
 }

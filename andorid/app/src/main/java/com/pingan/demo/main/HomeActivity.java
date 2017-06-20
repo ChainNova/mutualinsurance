@@ -17,11 +17,13 @@ public class HomeActivity extends BaseActivity implements OnCheckedChangeListene
     public static RadioButton rightTab;
     public static RadioButton leftTab;
     public static RadioButton middleTab;
+    public static RadioButton blockTab;
 
 
     private BillListFragment billListFragment;
     private PayFragment payFragment;
     private MyHomeFragment myHomeFragment;
+    private BlockFragment blockFragment;
     private BaseFragment currentFragment;
     private long lastClickBackTime;
 
@@ -63,6 +65,7 @@ public class HomeActivity extends BaseActivity implements OnCheckedChangeListene
         leftTab = (RadioButton) findViewById(R.id.leftTab);
         rightTab = (RadioButton) findViewById(R.id.rightTab);
         middleTab = (RadioButton) findViewById(R.id.middleTab);
+        blockTab = (RadioButton) findViewById(R.id.blockTab);
     }
 
     /**
@@ -73,6 +76,7 @@ public class HomeActivity extends BaseActivity implements OnCheckedChangeListene
         leftTab.setOnCheckedChangeListener(this);
         rightTab.setOnCheckedChangeListener(this);
         middleTab.setOnCheckedChangeListener(this);
+        blockTab.setOnCheckedChangeListener(this);
         FragmentManagerControl.getInstance().setFragmentManager(getSupportFragmentManager());
         billListFragment = new BillListFragment();
         leftTab.setChecked(true);
@@ -114,6 +118,16 @@ public class HomeActivity extends BaseActivity implements OnCheckedChangeListene
                     FragmentManagerControl.getInstance()
                             .switchFragment(currentFragment, payFragment);
                     currentFragment = payFragment;
+                }
+                break;
+            case R.id.blockTab:
+                if (isChecked) {
+                    if (blockFragment == null) {
+                        blockFragment = new BlockFragment();
+                    }
+                    FragmentManagerControl.getInstance()
+                            .switchFragment(currentFragment, blockFragment);
+                    currentFragment = blockFragment;
                 }
                 break;
             default:

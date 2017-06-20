@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.pingan.demo.R;
-import com.pingan.demo.main.NumUtil;
+import com.pingan.demo.NumUtil;
 import com.pingan.demo.model.entity.Insurance;
 
 import java.util.List;
@@ -80,16 +80,15 @@ public class BillListAdapter extends BaseAdapter {
             itemHolder.description2.setText(data.getDescription().get(1));
         }
 
-        int value= NumUtil.changeToInt(data.getAmount_max());
-        if (value/ 10000 > 0) {
+        int value = NumUtil.changeToInt(data.getAmount_max());
+        if (value / 10000 > 0) {
             itemHolder.amount_max.setText(String.valueOf(value / 10000) + "万");
         } else {
             itemHolder.amount_max.setText(data.getAmount_max());
         }
-        int value1= NumUtil.changeToInt(data.getCount_bought());
+        int value1 = NumUtil.changeToInt(data.getCount_bought());
         if (value1 / 10000 > 0) {
-            itemHolder.count_bought
-                    .setText(String.valueOf(value1 / 10000) + "万人参与");
+            itemHolder.count_bought.setText(String.valueOf(value1 / 10000) + "万人参与");
         } else {
             itemHolder.count_bought.setText(String.valueOf(data.getCount_bought()) + "人参与");
         }

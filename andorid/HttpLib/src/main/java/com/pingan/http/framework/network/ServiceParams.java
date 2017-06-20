@@ -38,6 +38,11 @@ public abstract class ServiceParams<T> {
      */
     protected String serviceTag = "default";
 
+    public ServiceParams(String url, Class<T> responsType) {
+        this.url = url;
+        this.responseType = responsType;
+    }
+
     public Map<String, String> getHeaders() {
         return headers;
     }
@@ -65,16 +70,6 @@ public abstract class ServiceParams<T> {
         return okHttpClient;
     }
 
-
-    public ServiceParams(String url, Class<T> responsType) {
-        this.url = url;
-        this.responseType = responsType;
-    }
-
-    public void setBusinessParser(BusinessParser parser) {
-        this.mBusinessParser = parser;
-    }
-
     public abstract Request getRequest(String tag);
 
     public boolean isNeedCacheData() {
@@ -97,9 +92,12 @@ public abstract class ServiceParams<T> {
         return this;
     }
 
-
     public BusinessParser<T> getBusinessParser() {
         return mBusinessParser;
+    }
+
+    public void setBusinessParser(BusinessParser parser) {
+        this.mBusinessParser = parser;
     }
 
     public String getServiceTag() {

@@ -1,4 +1,4 @@
-package com.pingan.demo.main;
+package com.pingan.demo;
 
 /**
  * Created by guolidong752 on 17/5/12.
